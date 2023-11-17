@@ -1,5 +1,6 @@
 const express = require("express");
 const productModel = require("../models/product");
+const CryptoJS = require("crypto-js");
 
 const getAllProduct = async(req, res) => {
     try{
@@ -43,6 +44,10 @@ const createProduct = async(req, res) => {
         });
 
         const result = await product.save();
+
+        // const cipherText = CryptoJS.AES.encrypt(JSON.stringify(result), process.env.SECRET_KEY).toString();
+
+        // console.log(cipherText);
 
         res.status(200).json({result : result, isSuccess : true})
     }catch(error){
