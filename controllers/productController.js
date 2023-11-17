@@ -50,4 +50,35 @@ const createProduct = async(req, res) => {
     }
 };
 
-module.exports = {getAllProduct, getProductById, createProduct}
+const editProduct = async(req, res) => {
+    try{
+        const product = await productModel.findByIdAndUpdate(req.params.id, req.body, {new : true});
+
+        if(!product){
+            return res.status(400).json({msg : "Product not found", isSuccess : false})
+        }
+
+        res.status(200).json({result : product, isSuccess : true})
+
+    }catch(error){
+        res.status(200).json({msg : error, isSuccess : false})
+    }
+};
+
+const deleteProduct = async(req, res) => {
+    try{
+        const product = await productModel.findByIdAndDelete(req.params.id);
+
+        if(!product){
+            return res.status(400).json({msg : "Product not found", isSuccess : false});
+        }
+
+        res.status(200).json({result : product, isSucces : true})
+
+    }catch(error){
+        console.log(error.message)
+        res.status(400).json({msg : error.message, isSuccess : false})
+    }
+};
+
+module.exports = {getAllProduct, getProductById, createProduct, editProduct, deleteProduct}

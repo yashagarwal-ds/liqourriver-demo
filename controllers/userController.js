@@ -47,8 +47,8 @@ const createUser = async(req, res) => {
             return res.status(403).json({msg : "Password doesn't match", isSuccess : true})
         }
 
-        const newPassword = await bcrypt.hash(password, 10);
-        const newCpassword = await bcrypt.hash(cpassword, 10);
+        const newPassword = await bcrypt.hash(password, process.env.PASSWORD_HASH);
+        const newCpassword = await bcrypt.hash(cpassword, process.env.PASSWORD_HASH);
 
         user = new userModel({
             name : name,
@@ -67,6 +67,34 @@ const createUser = async(req, res) => {
     }catch(error){
         console.log(error.message);
         res.status(400).json({msg : error.message, isSuccess : false})
+    }
+};
+
+const editUser = async(req, res) => {
+    try{
+        const user = await userModel.findByIdAndUpdate(req.params.id, req.body, {new : true});
+
+        if(!user){
+            return res.status(400).json({msg : "User not found", isSuccess : false})
+        }
+
+        res.status(200).json({result : user, isSuccess : true})
+    }catch(error){
+        res.status(400).json({msg : error, isSuccess : false})
+    }
+};
+
+const deleteUser = async(req, res) => {
+    try{
+        const user = await userModel.findByIdAndDelete(req.params.id);
+
+        if(!user){
+            return res.status(400).json({msg : "User not found", isSuccess : false})
+        }
+
+        res.status(200).json({result : user, isSuccess : true});
+    }catch(error){
+        res.status(400).json({msg : error, isSuccess : false})
     }
 };
 
@@ -91,4 +119,4 @@ const userLogin = async(req, res) => {
     }
 }
 
-module.exports = {getAllUser, getUserById, createUser, userLogin}
+module.exports = {getAllUser, getUserById, createUser, editUser, deleteUser, userLogin}
